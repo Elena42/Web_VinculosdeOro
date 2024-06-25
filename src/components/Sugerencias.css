@@ -1,0 +1,51 @@
+.sugerencias-container {
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+}
+
+.sugerencia-item {
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 16px;
+    margin-bottom: 16px;
+}
+
+.titulo {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.descripcion {
+    font-size: 18px;
+    margin-bottom: 8px;
+}
+
+.lugar {
+    font-size: 18px;
+    margin-bottom: 8px;
+}
+
+.fecha {
+    font-size: 18px;
+    margin-bottom: 8px;
+}
+
+.aprobar-button {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.aprobar-button:hover {
+    background-color: #45a049;
+}

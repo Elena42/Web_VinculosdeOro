@@ -1,0 +1,44 @@
+.solicitud-container {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 16px;
+    margin-bottom: 16px;
+}
+
+.nombre,
+.correo {
+    margin-bottom: 8px;
+}
+
+span {
+    font-weight: bold;
+    margin-right: 8px;
+}
+
+.buttons-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.aprobar-btn,
+.rechazar-btn {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.rechazar-btn {
+    background-color: #f44336;
+}
+
+.aprobar-btn:hover,
+.rechazar-btn:hover {
+    opacity: 0.8;
+}

@@ -1,0 +1,119 @@
+/* Estilos generales del contenedor */
+.register-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-image: url('../registro_admins.jpeg');
+  background-position: center;
+  position: relative;
+  background-size: cover;
+}
+
+.register-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+  opacity: 0.4;
+  filter: blur(10px);
+  z-index: -1;
+}
+
+.register-content {
+  background: rgba(255, 255, 255, 0.9); /* Fondo blanco con opacidad */
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 400px; /* Ancho máximo */
+  text-align: center;
+}
+
+h2 {
+  margin-bottom: 20px;
+  color: #333; /* Color de texto del título */
+}
+
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-group {
+  position: relative;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px 15px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  font-size: 16px;
+  transition: border 0.3s ease;
+}
+
+.form-group input:focus {
+  border-color: #007bff; /* Color de borde al enfocar */
+  outline: none;
+}
+
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  margin-top: 10px; /* Añade un pequeño margen para separar del input */
+}
+
+.checkbox-container input[type="checkbox"] {
+  margin-right: 10px; /* Espacio entre el checkbox y la etiqueta */
+}
+
+.checkbox-label {
+  color: #3C3402; /* ColorPrimaryDark */
+  font-size: 1.4rem; /* Asegura el tamaño de la fuente como en el resto de la aplicación */
+}
+
+/* Asegura que los campos del formulario tengan estilos consistentes */
+.form-group {
+  text-align: left; /* Alinea el texto a la izquierda */
+}
+
+.register-button {
+  background-color: #007bff; /* Color del botón */
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.register-button:hover {
+  background-color: #0056b3; /* Color del botón al pasar el cursor */
+}
+
+.error-message {
+  color: red;
+  font-size: 16px;
+  margin-bottom: 15px;
+}
+
+.register-text {
+  margin-top: 15px;
+  color: #666;
+}
+
+.register-link {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.register-link:hover {
+  text-decoration: underline;
+}

@@ -1,25 +1,30 @@
-import logo from './logo.svg';
-import './App.css';
+// src/App.js
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import ProtectedRoute from './components/ProtectedRoute';
+import LoginAdmins from './components/LoginAdmins';
+import RegistroAdmins from './components/RegistroAdmins';
+import AdminDashboard from './components/AdminDashboard';
+import SplashScreen from './components/SplashScreen';
 
-function App() {
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <div>
+        <Routes>
+        <Route path="/" element={<SplashScreen />} />
+          <Route path="/login-admins" element={<LoginAdmins />} />
+          <Route path="/admin-dashboard" element={
+            <ProtectedRoute>
+              <AdminDashboard />
+            </ProtectedRoute>
+          } />
+          <Route path="/registro-admins" element={<RegistroAdmins />} />
+          <Route path="*" element={<LoginAdmins />} />
+        </Routes>
+       
+      </div>
+    </Router>
   );
-}
-
+};
 export default App;
