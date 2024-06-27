@@ -10,7 +10,7 @@ const RegistroAdmins = () => {
     confirmarContraseña: '',
     direccion: '',
     nombre: '',
-    rol: 'admin', // Asegúrate de que coincida con el rol esperado en Firestore (en minúsculas)
+    rol: 'admin', 
   });
   const [error, setError] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
@@ -72,7 +72,7 @@ const RegistroAdmins = () => {
       // Almacenar los datos del administrador en Firestore en la colección "Solicitudes"
       await db.collection('Solicitudes').doc(userId).set({
         aprobado: false,
-        confirmarContraseña: confirmarContraseña, // No es necesario almacenar, pero lo hacemos según el ejemplo
+        confirmarContraseña: confirmarContraseña,
         contraseña: contraseña,
         correo: correo,
         direccion: direccion,

@@ -15,8 +15,8 @@ const AdminDashboard = () => {
     fecha: '',
     fotoUrl: '',
     lugar: '',
-    nparticipantes: 0,
-    asistentes: 0,
+    nparticipantes: Number,
+    asistentes: Number,
     lista_asistentes: [],
     latitud: null,
     longitud: null
@@ -193,20 +193,37 @@ const AdminDashboard = () => {
   };
 
   const handleAcceptSugerencia = async (sugerencia) => {
-    if (window.confirm('¿Está seguro de que desea aceptar esta sugerencia?')){
+    if (window.confirm('¿Está seguro de que desea aceptar esta sugerencia?')) {
       try {
-        await db.collection('Eventos').add(sugerencia);
+        // Ajustar la transformación de la sugerencia en un evento
+        const eventoData = {
+          titulo: sugerencia.titulo,
+          descripcion: sugerencia.descripcion,
+          fecha: sugerencia.fecha,
+          lugar: sugerencia.lugar,
+          nparticipantes: sugerencia.nparticipantes,
+          asistentes: 0, // Iniciar con 0 asistentes
+          lista_asistentes: []
+        };
+  
+        // Guardar el nuevo evento en la colección "Eventos"
+        await db.collection('Eventos').add(eventoData);
+  
+        // Eliminar la sugerencia aceptada
         await db.collection('Sugerencias').doc(sugerencia.id).delete();
+  
+        // Actualizar las listas de sugerencias y eventos
         const sugerenciasSnapshot = await db.collection('Sugerencias').get();
         setSugerencias(sugerenciasSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+  
         const eventosSnapshot = await db.collection('Eventos').get();
         setEventos(eventosSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
       } catch (error) {
         console.error("Error al aceptar sugerencia:", error);
       }
     }
-  
   };
+  
 
   const handleRejectSugerencia = async (id) => {
     if (window.confirm('¿Está seguro de que desea rechazar esta sugerencia?')){
@@ -221,17 +238,27 @@ const AdminDashboard = () => {
   };
 
   const handleAcceptSolicitud = async (solicitud) => {
-    if (window.confirm('¿Está seguro de que desea aceptar este Administrador?')){
-    try {
-      await db.collection('Administradores').add({ ...solicitud, aprobado: true });
-      await db.collection('Solicitudes').doc(solicitud.id).delete();
-      const solicitudesSnapshot = await db.collection('Solicitudes').get();
-      setSolicitudes(solicitudesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-    } catch (error) {
-      console.error("Error al aceptar solicitud:", error);
+    if (window.confirm('¿Está seguro de que desea aceptar este Administrador?')) {
+      try {
+        // Guardar el documento en la colección "Administradores" usando el mismo ID del documento en "Solicitudes"
+        await db.collection('Administradores').doc(solicitud.id).set({
+          ...solicitud,
+          aprobado: true
+        });
+  
+        // Eliminar el documento de la colección "Solicitudes"
+        await db.collection('Solicitudes').doc(solicitud.id).delete();
+  
+        // Obtener y actualizar el estado con las solicitudes restantes
+        const solicitudesSnapshot = await db.collection('Solicitudes').get();
+        setSolicitudes(solicitudesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+  
+      } catch (error) {
+        console.error("Error al aceptar solicitud:", error);
+      }
     }
-  }
   };
+  
 
   const handleRejectSolicitud = async (id) => {
     if (window.confirm('¿Está seguro de que desea rechazar este Administrador?')){
@@ -258,9 +285,7 @@ const AdminDashboard = () => {
       fecha: '',
       fotoUrl: '',
       lugar: '',
-      nparticipantes: 0,
-      asistentes: 0,
-      lista_asistentes: [],
+      nparticipantes: Number,
       latitud: null,
       longitud: null
     });
@@ -302,7 +327,6 @@ const AdminDashboard = () => {
                   <input type="text" name="fecha" placeholder="Fecha (dd/mm/yyyy hh:mm)" value={newEvento.fecha} onChange={handleInputChange} required />
                   <input type="file" onChange={handleFileChange} />
                   <input type="text" name="lugar" placeholder="Lugar" value={newEvento.lugar} onChange={handleInputChange} required />
-                  <input type="number" name="asistentes" placeholder="Asistentes" value={newEvento.asistentes} onChange={handleInputChange} required />
                   <input type="number" name="nparticipantes" placeholder="Número de participantes" value={newEvento.nparticipantes} onChange={handleInputChange} required />
                   <button type="submit" className="primary-button">Actualizar</button>
                   <button type="button" className="cancel-button" onClick={handleCancelEdit}>Cancelar</button>
@@ -310,7 +334,7 @@ const AdminDashboard = () => {
               ) : (
                 <>
                   <h3>{evento.titulo}</h3>
-                  <img src={evento.fotoUrl} alt={evento.titulo} className="evento-imagen" />
+                  <img src={evento.fotoUrl}  alt="" className="evento-imagen" />
                   <p>{evento.descripcion}</p>
                   <p>Fecha: {evento.fecha}</p>
                   <p>Lugar: {evento.lugar}</p>
