@@ -17,7 +17,6 @@ const AdminDashboard = () => {
     lugar: '',
     nparticipantes: Number,
     asistentes: Number,
-    lista_asistentes: [],
     latitud: null,
     longitud: null
   });
@@ -112,7 +111,6 @@ const AdminDashboard = () => {
         lugar: newEvento.lugar,
         nparticipantes: Number(newEvento.nparticipantes),
         asistentes: 0,
-        lista_asistentes: [],
         latitud: coordinates.latitud,
         longitud: coordinates.longitud
       };

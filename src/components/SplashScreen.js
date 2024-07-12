@@ -3,6 +3,7 @@ import Lottie from 'lottie-react';
 import './SplashScreen.css';
 import { useNavigate } from 'react-router-dom';
 
+
 const SplashScreen = () => {
   const [animationData, setAnimationData] = useState(null);
   const navigate = useNavigate();
@@ -11,7 +12,7 @@ const SplashScreen = () => {
     // Cargar la animación desde la carpeta public
     const fetchAnimationData = async () => {
       try {
-        const response = await fetch('/vinculosintro.json');
+        const response = await fetch('https://elena42.github.io/Web_VinculosdeOro/vinculosintro.json');
         const data = await response.json();
         setAnimationData(data);
       } catch (error) {
