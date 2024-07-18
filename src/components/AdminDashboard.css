@@ -168,4 +168,67 @@
     border-radius: 5px;
     font-size: 16px;
   }
+  /* Media Queries para Responsividad */
+@media (max-width: 1200px) {
+  .admin-sections {
+    flex-direction: column;
+  }
+
+  .section {
+    margin-right: 0;
+    margin-bottom: 20px; /* Añadir espacio entre secciones en dispositivos móviles */
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .admin-header-left,
+  .admin-header-right {
+    font-size: 16px; /* Ajustar tamaño de fuente en dispositivos más pequeños */
+  }
+
+  .cerrar-sesion,
+  .primary-button {
+    padding: 8px 16px; /* Ajustar padding en dispositivos más pequeños */
+    font-size: 14px; /* Ajustar tamaño de fuente en dispositivos más pequeños */
+  }
+
+  .admin-sections {
+    flex-direction: column;
+  }
+
+  .section {
+    margin-right: 0;
+    margin-bottom: 20px; /* Añadir espacio entre secciones en dispositivos móviles */
+  }
+
+  .section h2 {
+    font-size: 20px; /* Ajustar tamaño de fuente en dispositivos más pequeños */
+  }
+
+  .section .item h3 {
+    font-size: 18px; /* Ajustar tamaño de fuente en dispositivos más pequeños */
+  }
+
+  .section .item p {
+    font-size: 14px; /* Ajustar tamaño de fuente en dispositivos más pequeños */
+  }
+
+  .section .item .primary-button,
+  .section .item .danger-button {
+    padding: 8px 16px; /* Ajustar padding en dispositivos más pequeños */
+    font-size: 14px; /* Ajustar tamaño de fuente en dispositivos más pequeños */
+  }
+
+  .form input,
+  .form textarea {
+    width: 100%; /* Ajustar ancho en dispositivos más pequeños */
+    margin-bottom: 10px;
+  }
+}
+
   
