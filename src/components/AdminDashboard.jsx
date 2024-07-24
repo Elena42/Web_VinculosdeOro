@@ -21,6 +21,7 @@ const AdminDashboard = () => {
     longitud: null
   });
   const [foto, setFoto] = useState(null);
+  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -44,6 +45,11 @@ const AdminDashboard = () => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewEvento({ ...newEvento, [name]: value });
+    // Limpiar errores del campo modificado
+  setErrors(prevErrors => ({
+    ...prevErrors,
+    [name]: undefined
+  }));
   };
 
   const handleFileChange = (e) => {
@@ -53,8 +59,48 @@ const AdminDashboard = () => {
       setFoto(null); // Limpiar foto si no se selecciona ningún archivo
     }
   };
-  
 
+  const isValidDateFormat = (dateString) => {
+    // Expresión regular para verificar el formato "dd/MM/yyyy HH:mm"
+    const regex = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4} ([01][0-9]|2[0-3]):([0-5][0-9])$/;
+    return regex.test(dateString);
+  };
+
+
+  const isValidDate = (dateString) => {
+    const [day, month, year, hours, minutes] = dateString.split(/[\/: ]/).map(Number);
+    const date = new Date(year, month - 1, day, hours, minutes);
+    return date.getFullYear() === year && date.getMonth() + 1 === month && date.getDate() === day && 
+           date.getHours() === hours && date.getMinutes() === minutes;
+  };
+
+  const validateFields = async() => {
+    const errors = {};
+    
+    if (!newEvento.titulo) errors.titulo = 'Por favor introduzca el título';
+    if (!newEvento.descripcion) errors.descripcion = 'Por favor introduzca la descripción';
+    if (!newEvento.fecha) errors.fecha = 'Por favor introduzca la fecha';
+    if (!isValidDateFormat(newEvento.fecha) || !isValidDate(newEvento.fecha)) {
+      errors.fecha = 'La fecha debe estar en el formato "dd/MM/yyyy HH:mm" y ser una fecha válida';
+    }
+    if (!newEvento.lugar) errors.lugar = 'Por favor introduzca el lugar';
+    if (!newEvento.nparticipantes || isNaN(newEvento.nparticipantes)) errors.nparticipantes = 'Por favor introduzca un número válido de participantes';
+    try {
+      const coordinates = await geocodeAddress(newEvento.lugar);
+      if (!coordinates || !coordinates.latitud || !coordinates.longitud) {
+        errors.lugar = 'Por favor seleccione una ubicación válida en Google Maps';
+      } else {
+        newEvento.latitud = coordinates.latitud;
+        newEvento.longitud = coordinates.longitud;
+      }
+    } catch (error) {
+      errors.lugar = 'Error al validar la ubicación. Inténtelo de nuevo.';
+    }
+
+    return errors;
+  };
+
+ 
   // Función para realizar geocodificación y obtener latitud y longitud
   const geocodeAddress = async (direccion) => {
     try {
@@ -77,12 +123,13 @@ const AdminDashboard = () => {
 
   const handleCreateEvento = async (e) => {
     e.preventDefault();
+    const fieldErrors = await validateFields();
+    if(Object.keys(fieldErrors).length>0){
+      setErrors(fieldErrors);
+      return;
+    }
     try {
-      // Validar que todos los campos requeridos estén completos
-      if (!newEvento.titulo || !newEvento.descripcion || !newEvento.fecha || !newEvento.lugar || !newEvento.nparticipantes) {
-        console.error("Por favor complete todos los campos requeridos.");
-        return;
-      }
+      
   
       let fotoUrl = '';
   
@@ -99,7 +146,7 @@ const AdminDashboard = () => {
   
       // Verificar que se obtuvieron las coordenadas correctamente
       if (!coordinates || !coordinates.latitud || !coordinates.longitud) {
-        console.error("No se pudieron obtener las coordenadas.");
+        setErrors({ lugar: 'Por favor seleccione una ubicación válida en Google Maps' });
         return;
       }
   
@@ -149,6 +196,11 @@ const AdminDashboard = () => {
 
   const handleUpdateEvento = async (e) => {
     e.preventDefault();
+    const fieldErrors = await validateFields();
+    if (Object.keys(fieldErrors).length > 0) {
+      setErrors(fieldErrors);
+      return;
+    }
     try {
       const updatedEvento = { ...newEvento };
   
@@ -159,19 +211,18 @@ const AdminDashboard = () => {
         await fotoRef.put(foto);
         updatedEvento.fotoUrl = await fotoRef.getDownloadURL();
       }
+
+      const coordinates = await geocodeAddress(updatedEvento.lugar);
+      if (!coordinates || !coordinates.latitud || !coordinates.longitud) {
+        setErrors({ lugar: 'Por favor seleccione una ubicación válida en Google Maps' });
+        return;
+      }
+      updatedEvento.latitud = coordinates.latitud;
+      updatedEvento.longitud = coordinates.longitud;
+
   
       // Actualizar solo los campos que han cambiado
-      await db.collection('Eventos').doc(newEvento.id).update({
-        titulo: updatedEvento.titulo,
-        descripcion: updatedEvento.descripcion,
-        fecha: updatedEvento.fecha,
-        fotoUrl: updatedEvento.fotoUrl,
-        asistentes:updatedEvento.asistentes,
-        lugar: updatedEvento.lugar,
-        nparticipantes: Number(updatedEvento.nparticipantes),
-        latitud: updatedEvento.latitud,
-        longitud: updatedEvento.longitud
-      });
+      await db.collection('Eventos').doc(newEvento.id).update(updatedEvento);
   
       setEditEventoId(null);
       resetForm();
@@ -193,6 +244,12 @@ const AdminDashboard = () => {
   const handleAcceptSugerencia = async (sugerencia) => {
     if (window.confirm('¿Está seguro de que desea aceptar esta sugerencia?')) {
       try {
+        const coordinates = await geocodeAddress(sugerencia.lugar);
+
+        if (!coordinates || !coordinates.latitud || !coordinates.longitud) {
+          console.error("No se pudieron obtener las coordenadas.");
+          return;
+        }
         // Ajustar la transformación de la sugerencia en un evento
         const eventoData = {
           titulo: sugerencia.titulo,
@@ -201,7 +258,8 @@ const AdminDashboard = () => {
           lugar: sugerencia.lugar,
           nparticipantes: sugerencia.nparticipantes,
           asistentes: 0, // Iniciar con 0 asistentes
-          lista_asistentes: []
+          latitud: coordinates.latitud,
+          longitud: coordinates.longitud
         };
   
         // Guardar el nuevo evento en la colección "Eventos"
@@ -288,7 +346,9 @@ const AdminDashboard = () => {
       longitud: null
     });
     setFoto(null);
+    setErrors({});
   };
+ 
 
   return (
     <div className="admin-dashboard">
@@ -306,13 +366,26 @@ const AdminDashboard = () => {
           <button onClick={() => setShowForm(!showForm)} className="primary-button">{showForm ? 'Cancelar' : 'Crear Evento'}</button>
           {showForm && (
             <form onSubmit={handleCreateEvento} className="form">
-              <input type="text" name="titulo" placeholder="Título" value={newEvento.titulo} onChange={handleInputChange} required />
-              <textarea name="descripcion" placeholder="Descripción" value={newEvento.descripcion} onChange={handleInputChange} required></textarea>
-              <input type="text" name="fecha" placeholder="Fecha (dd/mm/yyyy hh:mm)" value={newEvento.fecha} onChange={handleInputChange} required />
+              <input type="text" name="titulo" placeholder="Título" value={newEvento.titulo} onChange={handleInputChange} />
+              {errors.titulo && <span className="error-message">{errors.titulo}</span>}
+
+              <textarea name="descripcion" placeholder="Descripción" value={newEvento.descripcion} onChange={handleInputChange}></textarea>
+              {errors.descripcion && <span className="error-message">{errors.descripcion}</span>}
+
+              <input type="text" name="fecha" placeholder="Fecha (dd/mm/yyyy hh:mm)" value={newEvento.fecha} onChange={handleInputChange} />
+              {errors.fecha && <span className="error-message">{errors.fecha}</span>}
+              
+              
+              <input type="text" name="lugar" placeholder="Lugar" value={newEvento.lugar} onChange={handleInputChange}  />
+              {errors.lugar && <span className="error-message">{errors.lugar}</span>}
+              
+              
+              
+              <input type="number" name="nparticipantes" placeholder="Número de participantes" value={newEvento.nparticipantes} onChange={handleInputChange}  />
+              {errors.nparticipantes && <span className="error-message">{errors.nparticipantes}</span>}
+
               <input type="file" onChange={handleFileChange} />
-              <input type="text" name="lugar" placeholder="Lugar" value={newEvento.lugar} onChange={handleInputChange} required />
-              <input type="number" name="asistentes" placeholder="Asistentes" value={newEvento.asistentes} onChange={handleInputChange} required />
-              <input type="number" name="nparticipantes" placeholder="Número de participantes" value={newEvento.nparticipantes} onChange={handleInputChange} required />
+              
               <button type="submit" className="primary-button">Crear Evento</button>
             </form>
           )}
