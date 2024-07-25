@@ -461,6 +461,9 @@ const AdminDashboard = () => {
             <div key={sugerencia.id} className="item">
               <h3>{sugerencia.titulo}</h3>
               <p>{sugerencia.descripcion}</p>
+              {sugerencia.fecha && <p>Fecha: {sugerencia.fecha}</p>}
+              {sugerencia.lugar && <p>Lugar: {sugerencia.lugar}</p>}
+              {sugerencia.nparticipantes && <p>Número de participantes: {sugerencia.nparticipantes}</p>}
               <button onClick={() => handleAcceptSugerencia(sugerencia)} className="primary-button">Aceptar</button>
               <button onClick={() => handleRejectSugerencia(sugerencia.id)} className="danger-button">Rechazar</button>
             </div>
