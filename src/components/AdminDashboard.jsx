@@ -94,13 +94,37 @@ const AdminDashboard = () => {
         newEvento.longitud = coordinates.longitud;
       }
     } catch (error) {
+      console.error('Error al validar la ubicación:', error.message); // Mensaje de error para depuración
       errors.lugar = 'Error al validar la ubicación. Inténtelo de nuevo.';
     }
 
     return errors;
   };
 
- 
+  const geocodeAddress = async (direccion) => {
+    const apiKey = 'AIzaSyBwN4qDYd6i1KqVNuccuW1gWpFC7xPjQI0'; 
+    try {
+      const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(direccion)}&key=${apiKey}`);
+      const data = await response.json();
+      console.log('Geocoding response:', data); // Imprime la respuesta para depuración
+  
+      if (data.status === 'OK' && data.results && data.results.length > 0) {
+        const location = data.results[0].geometry.location;
+        return {
+          latitud: location.lat,
+          longitud: location.lng,
+        };
+      } else {
+        console.error('Error en la respuesta de la API:', data.status, data.error_message); // Mensaje de error en caso de respuesta negativa
+        throw new Error('No se pudo obtener la latitud y longitud para la dirección proporcionada.');
+      }
+    } catch (error) {
+      console.error('Error en la geocodificación:', error);
+      throw new Error('Error al obtener latitud y longitud.');
+    }
+  };
+
+ /*
   // Función para realizar geocodificación y obtener latitud y longitud
   const geocodeAddress = async (direccion) => {
     try {
@@ -119,7 +143,7 @@ const AdminDashboard = () => {
       console.error('Error en la geocodificación:', error);
       throw new Error('Error al obtener latitud y longitud.');
     }
-  };
+  };*/
 
   const handleCreateEvento = async (e) => {
     e.preventDefault();
@@ -394,11 +418,23 @@ const AdminDashboard = () => {
               {editEventoId === evento.id ? (
                 <form onSubmit={handleUpdateEvento} className="form">
                   <input type="text" name="titulo" placeholder="Título" value={newEvento.titulo} onChange={handleInputChange} required />
+                  {errors.titulo && <span className="error-message">{errors.titulo}</span>}
+
                   <textarea name="descripcion" placeholder="Descripción" value={newEvento.descripcion} onChange={handleInputChange} required></textarea>
+                   {errors.descripcion && <span className="error-message">{errors.descripcion}</span>}
+                  
                   <input type="text" name="fecha" placeholder="Fecha (dd/mm/yyyy hh:mm)" value={newEvento.fecha} onChange={handleInputChange} required />
+                  {errors.fecha && <span className="error-message">{errors.fecha}</span>}
+                  
                   <input type="file" onChange={handleFileChange} />
+                  {errors.foto && <span className="error-message">{errors.foto}</span>}
+
                   <input type="text" name="lugar" placeholder="Lugar" value={newEvento.lugar} onChange={handleInputChange} required />
+                  {errors.lugar && <span className="error-message">{errors.lugar}</span>}
+                  
                   <input type="number" name="nparticipantes" placeholder="Número de participantes" value={newEvento.nparticipantes} onChange={handleInputChange} required />
+                  {errors.nparticipantes && <span className="error-message">{errors.nparticipantes}</span>}
+
                   <button type="submit" className="primary-button">Actualizar</button>
                   <button type="button" className="cancel-button" onClick={handleCancelEdit}>Cancelar</button>
                 </form>
@@ -419,6 +455,7 @@ const AdminDashboard = () => {
           ))}
         </div>
         <div className="section sugerencias">
+        {errors.general && <div className="error-message">{errors.general}</div>}
           <h2>SUGERENCIAS</h2>
           {sugerencias.map(sugerencia => (
             <div key={sugerencia.id} className="item">
