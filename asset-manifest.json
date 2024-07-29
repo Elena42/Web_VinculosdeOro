@@ -1,0 +1,18 @@
+{
+  "files": {
+    "main.css": "/Web_VinculosdeOro/static/css/main.d072e967.css",
+    "main.js": "/Web_VinculosdeOro/static/js/main.a53815b8.js",
+    "static/media/solicitudes.jpeg": "/Web_VinculosdeOro/static/media/solicitudes.d02d5edcfee30b2b1fc5.jpeg",
+    "static/media/imagen_login.jpeg": "/Web_VinculosdeOro/static/media/imagen_login.cc30584bc40bd686e5e2.jpeg",
+    "static/media/sugerencias.jpeg": "/Web_VinculosdeOro/static/media/sugerencias.a949f060d23b0892cd95.jpeg",
+    "static/media/eventos.jpeg": "/Web_VinculosdeOro/static/media/eventos.5df3abd21b5c6d0dae5b.jpeg",
+    "static/media/registro_admins.jpeg": "/Web_VinculosdeOro/static/media/registro_admins.765bcbee0a92ae23759b.jpeg",
+    "index.html": "/Web_VinculosdeOro/index.html",
+    "main.d072e967.css.map": "/Web_VinculosdeOro/static/css/main.d072e967.css.map",
+    "main.a53815b8.js.map": "/Web_VinculosdeOro/static/js/main.a53815b8.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.d072e967.css",
+    "static/js/main.a53815b8.js"
+  ]
+}
